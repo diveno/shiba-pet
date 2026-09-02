@@ -1,0 +1,11 @@
+{
+  "name": "shiba-pet",
+  "owner": { "name": "Gabriele Venosta" },
+  "plugins": [
+    {
+      "name": "shiba",
+      "source": "./",
+      "description": "A pixel-art shiba inu that keeps you company in Claude Code."
+    }
+  ]
+}

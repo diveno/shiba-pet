@@ -1,0 +1,157 @@
+# 🐕 shiba-pet
+
+A pixel-art shiba inu that keeps you company inside [Claude Code](https://claude.ai/code).
+
+He is not static ASCII art. Hunger, energy and mood decay in real time; bond
+and XP grow when you look after him; levels unlock tricks. He shows up in your
+status line, reacts to your commits, deploys and test runs, and now and then
+reminds you to review the diff before pushing.
+
+```
+   ▄              ▄     Mochi  lv2 Shiba  happy
+   ▀▄            ▄▀     🍖 belly    █████████░  90    ⚡ energy   ███████░░░  70
+  ▄▀▀▀▄▄▄▄▄▄▄▄▄▄▀▀▀▄    ♥ mood     ██████████ 100    ♡ bond     ██████████ 100
+  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    xp 89/140   streak 3g   2 days together
+```
+
+(In your terminal those rows are an orange muzzle — see [Where the colour
+works](#where-the-colour-works).)
+
+## Install
+
+Requires **Python 3** and nothing else. No dependencies, no network calls.
+
+```bash
+git clone https://github.com/<owner>/shiba-pet.git
+cd shiba-pet
+./install.sh --lang en          # or --lang it
+```
+
+That gives you the `mochi` command and (if you say yes) the status line. For
+the automatic reactions, install it as a plugin from inside Claude Code:
+
+```
+/plugin marketplace add <owner>/shiba-pet
+/plugin install shiba
+```
+
+The plugin brings the skill (so you can just say "feed the dog") and the hooks
+that react to your commands. The installer handles the two things a plugin
+cannot: the `mochi` command and the status line.
+
+Already have a status line? Keep it — the wrapper chains it:
+
+```bash
+export SHIBA_STATUSLINE_BASE="npx -y ccstatusline@latest"
+```
+
+## Commands
+
+```
+mochi                  how he's doing
+mochi feed             full meal          mochi treat      snack
+mochi pet              mood + bond        mochi play       costs energy
+mochi walk             biggest gain       mochi nap 30     rest 3x faster
+mochi wake             wake him up        mochi tricks     what he knows
+mochi trick sit        perform one        mochi name Kuro  rename
+mochi photo            colour PNG         mochi help       the full list
+mochi style pixel|ascii|doge
+```
+
+Add `--oneline` for a single line, `--art` to draw the whole dog as text.
+
+## Care
+
+| Stat | Decay | How to raise it |
+| --- | --- | --- |
+| belly | −4/h | `feed` (+45), `treat` (+12) |
+| energy | +7/h awake, **+21/h asleep** | `nap`, `feed` (+8) |
+| mood | −1.2/h, faster when hungry or after a day away | `pet`, `play`, `walk` |
+| bond | never decays | `pet` (+5), `walk` (+7), tricks |
+
+A meal is refused when he is already full. `play` needs 20 energy, `walk`
+needs 30 — below that he lies down. Come back after a week and you will find
+him hungry and sulking; that is the point.
+
+Levels 0→7 (Pup → Supreme Doge). Each level unlocks a trick: `sit`, `paw`,
+`down`, `roll over`, `stay`, `find the bug`, `terraform plan`.
+
+## Automatic reactions
+
+The hooks classify what you just ran and let the dog react:
+
+| You ran | He reacts to |
+| --- | --- |
+| `git commit` | commit |
+| `git push`, `terraform apply`, `aws ecs update-service`, `deploy*.sh` | deploy |
+| `terraform plan` | apply (he holds his breath) |
+| `pytest`, `jest`, `vitest`, `phpunit`, `go test`, `npm test`, `artisan test` | tests-pass / tests-fail |
+
+The test outcome is inferred from the output, because `PostToolUse` does not
+pass the exit code. Heredoc bodies are stripped and every rule is anchored to a
+real command position, so writing *about* `git commit` in a file does not make
+him celebrate.
+
+Every so often (at most one every 30 minutes) he also offers a reminder —
+"test the feature before calling it done", "secrets in the diff?" — and the
+contextual ones win: on `main` with uncommitted files, he says that instead.
+
+## Where the colour works
+
+Worth knowing before you wonder why the dog looks different in different
+places. Inside Claude Code:
+
+| Channel | Colour? |
+| --- | --- |
+| Status line | **Yes** — the only surface that interprets ANSI |
+| `!` command panel | No: escapes print literally |
+| Assistant messages | No: same |
+| Attached PNG | Shown as a clickable link, not inline |
+| A plain terminal outside Claude Code | Yes |
+
+So: the status line shows the muzzle in true colour (half blocks, 11 rows) for
+10 seconds after each command, then collapses back to 4 rows of bars. In chat
+the dog is two lines of text plus a `FACE=` path pointing at a colour portrait.
+`mochi photo` writes a PNG you can open.
+
+The muzzle sits on the **left** of the status-line text: Claude Code trims
+leading whitespace per row, so a right-aligned drawing loses its indent on the
+rows that are pure padding and breaks in half.
+
+## Make it your own dog
+
+The sprite is generated, not hand-pasted. Shapes and proportions are parameters
+at the top of `tools/draw-sprite.py`; the outer outline is derived (any filled
+pixel next to empty becomes black) so it stays closed whatever you change.
+
+```bash
+python3 tools/draw-sprite.py preview.png              # look at it
+python3 tools/draw-sprite.py skills/shiba/assets/shiba.png --emit
+python3 skills/shiba/scripts/build-faces.py           # regenerate portraits
+```
+
+Want a corgi? Change the ears and the tail curl.
+
+## Languages
+
+Strings live in `skills/shiba/i18n/<lang>.json` — `en` and `it` ship with it.
+Pick one with `mochi lang it` or `SHIBA_LANG=it`. To add a language, copy
+`en.json` and translate the values; the keys are the contract. Mood and event
+names stay in English inside the code: they address sprite patches and files.
+
+## Environment variables
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `SHIBA_LANG` | `en` | Language, overrides the state |
+| `SHIBA_STATE` | `~/.claude/shiba/state.json` | Where the state lives |
+| `SHIBA_STATUSLINE` | `bars` | `bars` (4 rows) or `line` (1 row) |
+| `SHIBA_STATUSLINE_BASE` | — | Status line to print before the dog's |
+| `SHIBA_FACE_SECONDS` | `10` | How long the muzzle stays up; `0` disables |
+| `SHIBA_TIP_COOLDOWN` | `1800` | Seconds between reminders |
+| `SHIBA_COLOR` | auto | `0` off, `1` force on |
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). The sprite is original art generated by
+`tools/draw-sprite.py` and covered by the same licence.

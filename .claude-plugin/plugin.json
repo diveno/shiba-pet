@@ -1,0 +1,9 @@
+{
+  "name": "shiba",
+  "version": "1.0.0",
+  "description": "A pixel-art shiba inu that keeps you company in Claude Code: persistent stats, moods, tricks, a status-line portrait, and reactions to your commits, deploys and tests.",
+  "author": { "name": "Gabriele Venosta" },
+  "homepage": "https://github.com/GabrieleVenosta/shiba-pet",
+  "keywords": ["pet", "fun", "status-line", "shiba", "companion"],
+  "hooks": "./hooks/hooks.json"
+}
