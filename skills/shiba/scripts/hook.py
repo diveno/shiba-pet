@@ -62,10 +62,16 @@ FAIL = re.compile(
 )
 
 
-def run_shiba(*args):
+def run_shiba(args, session=""):
+    # The payload says which session fired the hook, and that is the one whose
+    # status line should light up. More reliable than what we inherit: a hook
+    # is not always spawned from the session's own shell.
+    env = dict(os.environ)
+    if session:
+        env["CLAUDE_CODE_SESSION_ID"] = session
     try:
         out = subprocess.run([sys.executable, SHIBA] + list(args),
-                             capture_output=True, text=True, timeout=10)
+                             capture_output=True, text=True, timeout=10, env=env)
         return out.stdout.strip()
     except Exception:
         return ""
@@ -99,12 +105,12 @@ def mode_react(payload):
         blob = json.dumps(resp) if not isinstance(resp, str) else resp
         event = "tests-fail" if FAIL.search(blob or "") else "tests-pass"
 
-    line = run_shiba("react", event, "--oneline")
+    line = run_shiba(["react", event, "--oneline"], payload.get("session_id", ""))
     emit("PostToolUse", line)
 
 
-def mode_tip(_payload):
-    line = run_shiba("tip", "--oneline")
+def mode_tip(payload):
+    line = run_shiba(["tip", "--oneline"], payload.get("session_id", ""))
     emit("UserPromptSubmit", line)
 
 

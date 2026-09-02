@@ -122,6 +122,15 @@ def parse(s):
         return now()
 
 
+def session_id():
+    """The Claude Code session asking, empty in a plain terminal.
+
+    The muzzle is lit for whoever ran the command: with four sessions open,
+    the other three have no reason to interrupt themselves with a dog.
+    """
+    return os.environ.get("CLAUDE_CODE_SESSION_ID", "")
+
+
 def clamp(v, lo=0, hi=100):
     return max(lo, min(hi, int(round(v))))
 
@@ -149,6 +158,7 @@ def fresh(name="Mochi", lang=None):
         "asleep_until": None,
         "face_until": None,
         "face_emo": None,
+        "face_session": None,
         "last_tip": None,
         "style": "pixel",
         "companion": True,
@@ -738,6 +748,7 @@ def main():
     if secs > 0:
         st["face_until"] = iso(now() + timedelta(seconds=secs))
         st["face_emo"] = emo or emotion(st)
+        st["face_session"] = session_id()
 
     save(st)
 

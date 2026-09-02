@@ -145,7 +145,12 @@ places. Inside Claude Code:
 | A plain terminal outside Claude Code | Yes |
 
 So: the status line shows the muzzle in true colour (half blocks, 11 rows) for
-10 seconds after each command, then collapses back to 4 rows of bars. Both are
+10 seconds after each command, then collapses back to 4 rows of bars. It shows
+it **only in the session you ran the command in** — with four sessions open the
+other three keep their bars and stay quiet. Claude Code passes the session on
+stdin and the command records the one it was called from; `SHIBA_FACE_SCOPE=all`
+goes back to lighting up everywhere. A command run from a plain terminal has no
+session to claim, so that one shows up everywhere. Both are
 framed on all four sides (`SHIBA_BORDER=0` drops the frame); the one-row layout
 gets the sides only, since a full box would make it three rows tall. In chat
 the dog is two lines of text plus a `FACE=` path pointing at a colour portrait.
@@ -211,6 +216,7 @@ names stay in English inside the code: they address sprite patches and files.
 | `SHIBA_BORDER` | `1` | `0` drops the frame around the status line |
 | `SHIBA_STATUSLINE_BASE` | — | Status line to print before the dog's |
 | `SHIBA_FACE_SECONDS` | `10` | How long the muzzle stays up; `0` disables |
+| `SHIBA_FACE_SCOPE` | `session` | `all` shows the muzzle in every open session |
 | `SHIBA_TIP_COOLDOWN` | `1800` | Seconds between reminders |
 | `SHIBA_COLOR` | auto | `0` off, `1` force on |
 

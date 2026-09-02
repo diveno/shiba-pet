@@ -17,10 +17,17 @@ terminal with nothing telling them apart from the rest of the output. The frame
 also fixes the alignment - every row now starts with a bar instead of a space,
 so there is no leading whitespace left for Claude Code to trim.
 
+The muzzle belongs to the session that ran the command. Claude Code hands
+this script the session on stdin, and `shiba.py` records the one it was called
+from, so with several sessions open only that one lights up - the other status
+lines keep their bars and stay quiet. SHIBA_FACE_SCOPE=all restores the old
+behaviour of showing it everywhere.
+
 SHIBA_STATUSLINE=bars (default, 4 rows) | line (1 row).
 SHIBA_BORDER=0 drops the frame, SHIBA_COLOR=0 turns colour off.
 """
 
+import json
 import os
 import re
 import sys
@@ -32,6 +39,7 @@ import shiba  # noqa: E402
 COLOR = os.environ.get("SHIBA_COLOR", "1") != "0"
 LAYOUT = os.environ.get("SHIBA_STATUSLINE", "bars")
 BORDER = os.environ.get("SHIBA_BORDER", "1") != "0"
+SCOPE = os.environ.get("SHIBA_FACE_SCOPE", "session")
 
 # One icon per stat. Two rules, or the two rows of pairs stop lining up.
 # They must be real emoji: anything below U+1F300 is a dual-presentation
@@ -122,21 +130,32 @@ def face_lines(emo):
     return out
 
 
-def showing_face(st):
+def showing_face(st, sid):
     if not COLOR or LAYOUT == "line":
         return False
     u = st.get("face_until")
-    return bool(u) and shiba.parse(u) > shiba.now()
+    if not u or shiba.parse(u) <= shiba.now():
+        return False
+    if SCOPE == "all":
+        return True
+    owner = st.get("face_session")
+    # No owner on the state (written before this existed) and no session to
+    # compare against (a plain terminal) both mean nobody can claim the
+    # muzzle: show it, rather than hide the dog for a reason nobody asked for.
+    return not owner or not sid or owner == sid
 
 
 def main():
     # stdin carries Claude Code's session JSON: it has to be consumed anyway,
-    # or whoever writes into it gets a broken pipe.
+    # or whoever writes into it gets a broken pipe. It also says which session
+    # this status line is drawing for, which is how the muzzle stays put.
+    payload = {}
     if not sys.stdin.isatty():
         try:
-            sys.stdin.read()
+            payload = json.loads(sys.stdin.read() or "{}")
         except Exception:
-            pass
+            payload = {}
+    sid = payload.get("session_id") or os.environ.get("CLAUDE_CODE_SESSION_ID", "")
 
     try:
         st = shiba.load()
@@ -183,7 +202,7 @@ def main():
               (137, 110, 97)),
     ]
 
-    if not showing_face(st):
+    if not showing_face(st, sid):
         sys.stdout.write("\n".join(boxed(info)) + "\n")
         return
 

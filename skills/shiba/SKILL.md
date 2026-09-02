@@ -27,6 +27,11 @@ path when you run it yourself — a tool's PATH is not guaranteed. The command i
 State lives in `~/.claude/shiba/state.json` (override with `$SHIBA_STATE`). On
 first run it creates itself and the pup introduces himself.
 
+The state is shared by every open session, but the muzzle in the status line
+is not: it lights up only where the command was run, keyed on
+`$CLAUDE_CODE_SESSION_ID`. Nothing to do about it when running the script —
+the variable is inherited.
+
 ### Commands
 
 | Command | Effect |
