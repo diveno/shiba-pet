@@ -8,10 +8,18 @@ status line, reacts to your commits, deploys and test runs, and now and then
 reminds you to review the diff before pushing.
 
 ```
-   ▄              ▄     Mochi  lv2 Shiba  happy
-   ▀▄            ▄▀     🍖 belly    █████████░  90    ⚡ energy   ███████░░░  70
-  ▄▀▀▀▄▄▄▄▄▄▄▄▄▄▀▀▀▄    ♥ mood     ██████████ 100    ♡ bond     ██████████ 100
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    xp 89/140   streak 3g   2 days together
+   ▄▀▀▀▄         ▄▀▀▀▄     Mochi  lv1 Shiba Junior  excited
+  ▀▀▀▀▀▀▀▄     ▄▀▀▀▀▀▀▀    🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72
+  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄   ♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   xp 26/70   streak 1g   0 days together
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+  ▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄
+  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 ```
 
 (In your terminal those rows are an orange muzzle — see [Where the colour
