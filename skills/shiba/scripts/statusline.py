@@ -7,23 +7,33 @@ The status line is redrawn every turn and rewriting the JSON each time would
 mean races between processes and a last_seen that is always fresh - a dog that
 is never hungry nor sleepy.
 
-For a few seconds after a `mochi` command it widens and shows the muzzle in
+For a few seconds after a `shiba` command it widens and shows the muzzle in
 colour to the LEFT of the text. Not to the right: Claude Code's status line
 trims the leading whitespace of every line, so the rows made of padding plus
 drawing lose their indent and the muzzle breaks into two pieces.
 
+The block is framed: without a border the rows float in the middle of the
+terminal with nothing telling them apart from the rest of the output. The frame
+also fixes the alignment - every row now starts with a bar instead of a space,
+so there is no leading whitespace left for Claude Code to trim.
+
 SHIBA_STATUSLINE=bars (default, 4 rows) | line (1 row).
-SHIBA_COLOR=0 turns colour off.
+SHIBA_BORDER=0 drops the frame, SHIBA_COLOR=0 turns colour off.
 """
 
 import os
+import re
 import sys
+import unicodedata
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import shiba  # noqa: E402
 
 COLOR = os.environ.get("SHIBA_COLOR", "1") != "0"
 LAYOUT = os.environ.get("SHIBA_STATUSLINE", "bars")
+BORDER = os.environ.get("SHIBA_BORDER", "1") != "0"
+BORDER_RGB = (124, 101, 88)
+ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def paint(text, rgb):
@@ -40,6 +50,30 @@ def bar(v, width=10):
 
 def stat(icon, label, value):
     return "%s %-8s %s %3d" % (icon, label, bar(value), value)
+
+
+def dwidth(s):
+    """Columns the row really takes: escapes count zero, emoji count two."""
+    w = 0
+    for ch in ANSI.sub("", s):
+        if unicodedata.combining(ch) or ch in "\ufe0e\ufe0f":
+            continue
+        w += 2 if unicodedata.east_asian_width(ch) in ("W", "F") else 1
+    return w
+
+
+def boxed(rows):
+    """Frame the block on all four sides, padding every row to the widest."""
+    if not BORDER:
+        return rows
+    inner = max(dwidth(r) for r in rows)
+    rule = paint("\u2500" * (inner + 2), BORDER_RGB)
+    side = paint("\u2502", BORDER_RGB)
+    out = [paint("\u256d", BORDER_RGB) + rule + paint("\u256e", BORDER_RGB)]
+    for r in rows:
+        out.append("%s %s%s %s" % (side, r, " " * (inner - dwidth(r)), side))
+    out.append(paint("\u2570", BORDER_RGB) + rule + paint("\u256f", BORDER_RGB))
+    return out
 
 
 def face_lines(emo):
@@ -101,7 +135,7 @@ def main():
 
     if LAYOUT == "line":
         el, mu, er = shiba.FACES[emo]
-        sys.stdout.write(" ".join([
+        parts = [
             paint("(%s%s%s)" % (el, mu, er), (239, 183, 116)),
             paint(st["name"], (250, 251, 248)),
             paint("%s%d" % (lab["level"], lvl), (167, 130, 111)),
@@ -109,7 +143,11 @@ def main():
             "\U0001f356" + bar(100 - st["hunger"], 5),
             "⚡" + bar(st["energy"], 5),
             "♥" + bar(st["mood"], 5),
-        ]) + "\n")
+        ]
+        if BORDER:  # sides only: a full frame would triple a one-row layout
+            edge = paint("\u2502", BORDER_RGB)
+            parts = [edge] + parts + [edge]
+        sys.stdout.write(" ".join(parts) + "\n")
         return
 
     info = [
@@ -128,7 +166,7 @@ def main():
     ]
 
     if not showing_face(st):
-        sys.stdout.write("\n".join(info) + "\n")
+        sys.stdout.write("\n".join(boxed(info)) + "\n")
         return
 
     # A state written by an older version may carry a mood name this build
@@ -136,9 +174,11 @@ def main():
     saved = st.get("face_emo")
     if saved not in shiba.sprite()["moods"]:
         saved = emo
+    rows = []
     for k, row in enumerate(face_lines(saved)):
         txt = info[k] if k < len(info) else ""
-        sys.stdout.write(row + ("  " + txt if txt else "") + "\n")
+        rows.append(row + ("  " + txt if txt else ""))
+    sys.stdout.write("\n".join(boxed(rows)) + "\n")
 
 
 if __name__ == "__main__":

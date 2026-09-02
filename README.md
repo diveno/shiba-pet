@@ -13,10 +13,12 @@ reminds you to review the diff before pushing.
 <img src="skills/shiba/assets/faces/excited.png" width="180" alt="Mochi, the shiba">
 </td>
 <td>
-<pre>Mochi  lv1 Shiba Junior  excited
-🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72
-♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45
-xp 26/70   streak 1d   0 days together</pre>
+<pre>╭──────────────────────────────────────────────────────────╮
+│ Mochi  lv1 Shiba Junior  excited                         │
+│ 🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72 │
+│ ♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45   │
+│ xp 26/70   streak 1d   0 days together                   │
+╰──────────────────────────────────────────────────────────╯</pre>
 </td>
 </tr>
 </table>
@@ -35,7 +37,7 @@ cd shiba-pet
 ./install.sh --lang en          # or --lang it
 ```
 
-That gives you the `mochi` command and (if you say yes) the status line. For
+That gives you the `shiba` command and (if you say yes) the status line. For
 the automatic reactions, install it as a plugin from inside Claude Code:
 
 ```
@@ -45,7 +47,7 @@ the automatic reactions, install it as a plugin from inside Claude Code:
 
 The plugin brings the skill (so you can just say "feed the dog") and the hooks
 that react to your commands. The installer handles the two things a plugin
-cannot: the `mochi` command and the status line.
+cannot: the `shiba` command and the status line.
 
 Already have a status line? Keep it — the wrapper chains it:
 
@@ -56,17 +58,21 @@ export SHIBA_STATUSLINE_BASE="npx -y ccstatusline@latest"
 ## Commands
 
 ```
-mochi                  how he's doing
-mochi feed             full meal          mochi treat      snack
-mochi pet              mood + bond        mochi play       costs energy
-mochi walk             biggest gain       mochi nap 30     rest 3x faster
-mochi wake             wake him up        mochi tricks     what he knows
-mochi trick sit        perform one        mochi name Kuro  rename
-mochi photo            colour PNG         mochi help       the full list
-mochi style pixel|ascii|doge
+shiba                  how he's doing
+shiba feed             full meal          shiba treat      snack
+shiba pet              mood + bond        shiba play       costs energy
+shiba walk             biggest gain       shiba nap 30     rest 3x faster
+shiba wake             wake him up        shiba tricks     what he knows
+shiba trick sit        perform one        shiba name Kuro  rename
+shiba photo            colour PNG         shiba help       the full list
+shiba style pixel|ascii|doge
 ```
 
 Add `--oneline` for a single line, `--art` to draw the muzzle as text.
+
+The command is `shiba`, not the dog's name: `shiba name Kuro` renames him and
+everything else keeps working. (Before 1.1.0 the command was `mochi`; the old
+shim keeps working, `install.sh` will point it out.)
 
 ## Care
 
@@ -133,9 +139,11 @@ places. Inside Claude Code:
 | A plain terminal outside Claude Code | Yes |
 
 So: the status line shows the muzzle in true colour (half blocks, 11 rows) for
-10 seconds after each command, then collapses back to 4 rows of bars. In chat
+10 seconds after each command, then collapses back to 4 rows of bars. Both are
+framed on all four sides (`SHIBA_BORDER=0` drops the frame); the one-row layout
+gets the sides only, since a full box would make it three rows tall. In chat
 the dog is two lines of text plus a `FACE=` path pointing at a colour portrait.
-`mochi photo` writes a PNG you can open.
+`shiba photo` writes a PNG you can open.
 
 The muzzle sits on the **left** of the status-line text: Claude Code trims
 leading whitespace per row, so a right-aligned drawing loses its indent on the
@@ -170,7 +178,7 @@ Want a corgi? Change the ears and the tail curl.
 ## Languages
 
 Strings live in `skills/shiba/i18n/<lang>.json` — `en` and `it` ship with it.
-Pick one with `mochi lang it` or `SHIBA_LANG=it`. To add a language, copy
+Pick one with `shiba lang it` or `SHIBA_LANG=it`. To add a language, copy
 `en.json` and translate the values; the keys are the contract. Mood and event
 names stay in English inside the code: they address sprite patches and files.
 
@@ -181,6 +189,7 @@ names stay in English inside the code: they address sprite patches and files.
 | `SHIBA_LANG` | `en` | Language, overrides the state |
 | `SHIBA_STATE` | `~/.claude/shiba/state.json` | Where the state lives |
 | `SHIBA_STATUSLINE` | `bars` | `bars` (4 rows) or `line` (1 row) |
+| `SHIBA_BORDER` | `1` | `0` drops the frame around the status line |
 | `SHIBA_STATUSLINE_BASE` | — | Status line to print before the dog's |
 | `SHIBA_FACE_SECONDS` | `10` | How long the muzzle stays up; `0` disables |
 | `SHIBA_TIP_COOLDOWN` | `1800` | Seconds between reminders |

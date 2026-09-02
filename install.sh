@@ -1,10 +1,10 @@
 #!/bin/sh
 # Installer for the parts a Claude Code plugin cannot set up by itself:
-# the `mochi` command and the status line. The skill and the hooks come with
+# the `shiba` command and the status line. The skill and the hooks come with
 # the plugin - see README.md.
 #
 #   ./install.sh                 command + status line (asks first)
-#   ./install.sh --bin-only      only the mochi command
+#   ./install.sh --bin-only      only the shiba command
 #   ./install.sh --lang it       pick the dog's language (en, it)
 #   BIN=~/bin ./install.sh       install the command elsewhere
 set -e
@@ -30,15 +30,21 @@ command -v python3 >/dev/null || { echo "python3 is required"; exit 1; }
   exit 1
 }
 
-# --- the mochi command --------------------------------------------------
+# --- the shiba command --------------------------------------------------
 mkdir -p "$BIN"
-cat > "$BIN/mochi" <<EOF
+cat > "$BIN/shiba" <<EOF
 #!/bin/sh
-# Shortcut for the CLI shiba. The logic lives in the skill (see \`mochi help\`).
+# Shortcut for the CLI shiba. The logic lives in the skill (see \`shiba help\`).
 exec python3 "$HERE/skills/shiba/scripts/shiba.py" "\$@"
 EOF
-chmod +x "$BIN/mochi"
-echo "installed: $BIN/mochi"
+chmod +x "$BIN/shiba"
+echo "installed: $BIN/shiba"
+# Up to 1.0.0 the command was named after the default dog - but the name is
+# renameable and the command is not, so it moved to `shiba`. The old shim still
+# works; it is the user's to delete.
+if [ -f "$BIN/mochi" ] && grep -q "skills/shiba/scripts/shiba.py" "$BIN/mochi" 2>/dev/null; then
+  echo "  note: the old $BIN/mochi still works - remove it when you like"
+fi
 case ":$PATH:" in
   *":$BIN:"*) ;;
   *) echo "  note: $BIN is not on your PATH - add it to your shell profile" ;;
@@ -82,6 +88,6 @@ PY
 esac
 
 echo
-echo "Done. Try:  mochi        (or 'mochi help')"
+echo "Done. Try:  shiba        (or 'shiba help')"
 echo "Reactions to commits, deploys and tests come with the plugin:"
 echo "  /plugin marketplace add diveno/shiba-pet && /plugin install shiba"

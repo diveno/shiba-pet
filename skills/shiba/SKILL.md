@@ -17,11 +17,12 @@ Everything goes through one script — never invent stats, phrases or drawings:
 python3 <skill>/scripts/shiba.py <command> [args] [flags]
 ```
 
-There is also the `mochi` command created by `install.sh` (an `exec` on the
-script): `mochi feed`, `mochi treat`, `mochi pet`, `mochi play`, `mochi walk`,
-`mochi nap 30`, `mochi tricks`, `mochi photo`, `mochi help`. **Write `mochi`
+There is also the `shiba` command created by `install.sh` (an `exec` on the
+script): `shiba feed`, `shiba treat`, `shiba pet`, `shiba play`, `shiba walk`,
+`shiba nap 30`, `shiba tricks`, `shiba photo`, `shiba help`. **Write `shiba`
 when you give the user a command** (that is what they type), the full script
-path when you run it yourself — a tool's PATH is not guaranteed.
+path when you run it yourself — a tool's PATH is not guaranteed. The command is
+`shiba`, never the dog's name: the name is renameable, the command is not.
 
 State lives in `~/.claude/shiba/state.json` (override with `$SHIBA_STATE`). On
 first run it creates itself and the pup introduces himself.
