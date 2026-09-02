@@ -58,7 +58,7 @@ mochi photo            colour PNG         mochi help       the full list
 mochi style pixel|ascii|doge
 ```
 
-Add `--oneline` for a single line, `--art` to draw the whole dog as text.
+Add `--oneline` for a single line, `--art` to draw the muzzle as text.
 
 ## Care
 
@@ -120,14 +120,26 @@ rows that are pure padding and breaks in half.
 
 ## Make it your own dog
 
-The sprite is generated, not hand-pasted. Shapes and proportions are parameters
-at the top of `tools/draw-sprite.py`; the outer outline is derived (any filled
-pixel next to empty becomes black) so it stays closed whatever you change.
+The active sprite is `skills/shiba/assets/sprite.json`: a grid of palette
+indices plus one patch list per expression. Only the **muzzle** is stored
+(25x24) — that is all any surface actually renders, so the rest was dead
+weight.
+
+Swap it for another one:
 
 ```bash
-python3 tools/draw-sprite.py preview.png              # look at it
-python3 tools/draw-sprite.py skills/shiba/assets/shiba.png --emit
-python3 skills/shiba/scripts/build-faces.py           # regenerate portraits
+./tools/use-sprite.sh drawn                  # the bundled generated dog
+./tools/use-sprite.sh path/to/sprite.json    # anything with the same shape
+```
+
+It validates the grid against the declared `w`/`h` and regenerates the eight
+portraits. To generate one from scratch, `tools/draw-sprite.py` draws a whole
+shiba from parametric shapes — the outer outline is derived (any filled pixel
+next to empty becomes black), so it stays closed whatever you change:
+
+```bash
+python3 tools/draw-sprite.py preview.png     # look at it
+python3 tools/draw-sprite.py skills/shiba/assets/sprite-drawn.json --emit
 ```
 
 Want a corgi? Change the ears and the tail curl.

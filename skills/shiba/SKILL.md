@@ -46,7 +46,7 @@ first run it creates itself and the pup introduces himself.
 | `reset` | New pup from scratch. **Ask for confirmation first** |
 
 Flags: default two lines + a `FACE=` line, `--plain` drops FACE, `--oneline` is
-a single line, `--art` draws the whole sprite as text, `--full` adds the
+a single line, `--art` draws the muzzle as text, `--full` adds the
 activity log, `--png` / `--open` write the colour portrait.
 
 `react` events: `commit`, `deploy`, `tests-pass`, `tests-fail`, `error`,
@@ -164,24 +164,25 @@ one single line**, without emphasis or commentary.
 
 Three styles, in the `style` field of the state:
 
-- **`pixel`** (default) — the 30x44 sprite from `assets/sprite.json`, generated
-  by `tools/draw-sprite.py`. On a real terminal it comes out in true colour
-  (half blocks `▀`/`▄`, 22 rows); down a pipe it falls back to grey blocks
-  `█▓▒░` at **one character per pixel** (44 rows), because half blocks in black
-  and white lose the tone and turn into mush.
+- **`pixel`** (default) — the muzzle from `assets/sprite.json`, 25x24. Only
+  the muzzle is stored: no surface renders the body, so keeping it was dead
+  weight. On a real terminal it comes out in true colour (half blocks `▀`/`▄`,
+  12 rows); down a pipe it falls back to grey blocks `█▓▒░` at **one character
+  per pixel** (24 rows), because half blocks in black and white lose the tone
+  and turn into mush.
 - **`ascii`** — a compact hand-drawn face, 6 rows.
 - **`doge`** — a rounder variant, 8 rows.
 
 Eight expressions, obtained by patching the pixels of eyes, brows and tongue:
 `calm`, `happy`, `excited`, `hungry`, `sleepy`, `asleep`, `sad`, `suspicious`.
 Portraits in `assets/faces/<mood>.png` (RGBA, transparent background),
-regenerated with `scripts/build-faces.py`. To change the dog itself, edit the
-shapes in `tools/draw-sprite.py`, then:
+regenerated with `scripts/build-faces.py`. To change the dog itself, use
+`tools/use-sprite.sh <file>`, which validates the grid and regenerates the
+portraits. `assets/sprite-full.json` and `assets/sprite-drawn.json` are
+whole-body alternatives; swapping to one of those makes `--art` taller.
 
-```bash
-python3 tools/draw-sprite.py skills/shiba/assets/shiba.png --emit
-python3 skills/shiba/scripts/build-faces.py
-```
+A sprite whose expression patches fall outside the grid loses them silently,
+so `use-sprite.sh` checks the shape before installing it.
 
 ## Notes
 
