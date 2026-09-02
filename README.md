@@ -22,7 +22,7 @@ works](#where-the-colour-works).)
 Requires **Python 3** and nothing else. No dependencies, no network calls.
 
 ```bash
-git clone https://github.com/<owner>/shiba-pet.git
+git clone https://github.com/diveno/shiba-pet.git
 cd shiba-pet
 ./install.sh --lang en          # or --lang it
 ```
@@ -31,7 +31,7 @@ That gives you the `mochi` command and (if you say yes) the status line. For
 the automatic reactions, install it as a plugin from inside Claude Code:
 
 ```
-/plugin marketplace add <owner>/shiba-pet
+/plugin marketplace add diveno/shiba-pet
 /plugin install shiba
 ```
 

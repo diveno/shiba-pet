@@ -84,4 +84,4 @@ esac
 echo
 echo "Done. Try:  mochi        (or 'mochi help')"
 echo "Reactions to commits, deploys and tests come with the plugin:"
-echo "  /plugin marketplace add <owner>/shiba-pet && /plugin install shiba"
+echo "  /plugin marketplace add diveno/shiba-pet && /plugin install shiba"
