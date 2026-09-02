@@ -32,6 +32,18 @@ import shiba  # noqa: E402
 COLOR = os.environ.get("SHIBA_COLOR", "1") != "0"
 LAYOUT = os.environ.get("SHIBA_STATUSLINE", "bars")
 BORDER = os.environ.get("SHIBA_BORDER", "1") != "0"
+
+# One icon per stat. Two rules, or the two rows of pairs stop lining up.
+# They must be real emoji: anything below U+1F300 is a dual-presentation
+# character and the terminal is free to draw the thin monochrome glyph
+# instead, so U+26A1 carries U+FE0F to pin it to the colour one. And they must
+# all be the same width: U+2764 HEAVY BLACK HEART, say, measures one column
+# and draws two, which is exactly how a grid goes crooked. What is here is all
+# East Asian Wide; icon() pads anyway, so a narrower pick still fits.
+ICONS = {"belly": "\U0001f356",          # meat on bone
+         "energy": "\u26a1\ufe0f",       # high voltage, forced to emoji
+         "mood": "\U0001f60a",           # smiling face with smiling eyes
+         "bond": "\U0001f9e1"}           # orange heart, the shiba's own colour
 BORDER_RGB = (124, 101, 88)
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
@@ -48,8 +60,14 @@ def bar(v, width=10):
     return paint("█" * full + "░" * (width - full), rgb)
 
 
-def stat(icon, label, value):
-    return "%s %-8s %s %3d" % (icon, label, bar(value), value)
+def icon(key):
+    """The icon padded to two columns, so every cell starts at the same place."""
+    g = ICONS[key]
+    return g + " " * max(0, 2 - dwidth(g))
+
+
+def stat(key, label, value):
+    return "%s %-8s %s %3d" % (icon(key), label, bar(value), value)
 
 
 def dwidth(s):
@@ -140,9 +158,9 @@ def main():
             paint(st["name"], (250, 251, 248)),
             paint("%s%d" % (lab["level"], lvl), (167, 130, 111)),
             paint(t["moods"][emo], (214, 154, 92)),
-            "\U0001f356" + bar(100 - st["hunger"], 5),
-            "⚡" + bar(st["energy"], 5),
-            "♥" + bar(st["mood"], 5),
+            icon("belly") + bar(100 - st["hunger"], 5),
+            icon("energy") + bar(st["energy"], 5),
+            icon("mood") + bar(st["mood"], 5),
         ]
         if BORDER:  # sides only: a full frame would triple a one-row layout
             edge = paint("\u2502", BORDER_RGB)
@@ -155,10 +173,10 @@ def main():
                         paint("%s%d %s" % (lab["level"], lvl, t["levels"][lvl]),
                               (167, 130, 111)),
                         paint(t["moods"][emo], (214, 154, 92))),
-        "%s    %s" % (stat("\U0001f356", lab["belly"], 100 - st["hunger"]),
-                      stat("⚡", lab["energy"], st["energy"])),
-        "%s    %s" % (stat("♥", lab["mood"], st["mood"]),
-                      stat("♡", lab["bond"], st["bond"])),
+        "%s    %s" % (stat("belly", lab["belly"], 100 - st["hunger"]),
+                      stat("energy", lab["energy"], st["energy"])),
+        "%s    %s" % (stat("mood", lab["mood"], st["mood"]),
+                      stat("bond", lab["bond"], st["bond"])),
         paint("%s %d%s   %s %dg   %d %s"
               % (lab["xp"], st["xp"], "/%d" % nxt if nxt else "",
                  lab["streak"], st.get("streak", 1), age, lab["together"]),

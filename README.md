@@ -15,9 +15,9 @@ reminds you to review the diff before pushing.
 <td>
 <pre>╭──────────────────────────────────────────────────────────╮
 │ Mochi  lv1 Shiba Junior  excited                         │
-│ 🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72 │
-│ ♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45   │
-│ xp 26/70   streak 1d   0 days together                   │
+│ 🍖 belly    █████████░  90    ⚡️ energy   ███████░░░  72 │
+│ 😊 mood     ██████████ 100    🧡 bond     ████░░░░░░  45 │
+│ xp 26/70   streak 1g   0 days together                   │
 ╰──────────────────────────────────────────────────────────╯</pre>
 </td>
 </tr>
