@@ -7,23 +7,23 @@ and XP grow when you look after him; levels unlock tricks. He shows up in your
 status line, reacts to your commits, deploys and test runs, and now and then
 reminds you to review the diff before pushing.
 
-```
-   ▄▀▀▀▄         ▄▀▀▀▄     Mochi  lv1 Shiba Junior  excited
-  ▀▀▀▀▀▀▀▄     ▄▀▀▀▀▀▀▀    🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄   ♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   xp 26/70   streak 1g   0 days together
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄
-▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  ▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-```
+<table>
+<tr>
+<td width="210" align="center">
+<img src="skills/shiba/assets/faces/excited.png" width="180" alt="Mochi, the shiba">
+</td>
+<td>
+<pre>Mochi  lv1 Shiba Junior  excited
+🍖 belly    █████████░  90    ⚡ energy   ███████░░░  72
+♥ mood     ██████████ 100    ♡ bond     ████░░░░░░  45
+xp 26/70   streak 1d   0 days together</pre>
+</td>
+</tr>
+</table>
 
-(In your terminal those rows are an orange muzzle — see [Where the colour
-works](#where-the-colour-works).)
+That muzzle is the sprite itself, one PNG per expression. The status line draws
+the same pixels in true colour with half blocks — see [Where the colour
+works](#where-the-colour-works).
 
 ## Install
 
@@ -83,6 +83,21 @@ him hungry and sulking; that is the point.
 
 Levels 0→7 (Pup → Supreme Doge). Each level unlocks a trick: `sit`, `paw`,
 `down`, `roll over`, `stay`, `find the bug`, `terraform plan`.
+
+What he feels shows on his face:
+
+<table>
+<tr>
+<td align="center"><img src="skills/shiba/assets/faces/happy.png" width="64" alt="happy"><br><sub>happy</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/excited.png" width="64" alt="excited"><br><sub>excited</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/calm.png" width="64" alt="calm"><br><sub>calm</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/hungry.png" width="64" alt="hungry"><br><sub>hungry</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/sleepy.png" width="64" alt="sleepy"><br><sub>sleepy</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/asleep.png" width="64" alt="asleep"><br><sub>asleep</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/sad.png" width="64" alt="sad"><br><sub>sad</sub></td>
+<td align="center"><img src="skills/shiba/assets/faces/suspicious.png" width="64" alt="suspicious"><br><sub>suspicious</sub></td>
+</tr>
+</table>
 
 ## Automatic reactions
 
