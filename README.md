@@ -49,11 +49,17 @@ The plugin brings the skill (so you can just say "feed the dog") and the hooks
 that react to your commands. The installer handles the two things a plugin
 cannot: the `shiba` command and the status line.
 
-Already have a status line? Keep it — the wrapper chains it:
+Already have a status line? Keep it. The installer finds the one in your
+settings and chains it in front of the dog's, so you end up with both; re-run
+it later and the chain survives. To wire it by hand, or to change it:
 
 ```bash
 export SHIBA_STATUSLINE_BASE="npx -y ccstatusline@latest"
 ```
+
+If the two parts ever disagree, the base is the one in the `statusLine`
+command in `settings.json` — never hardcode it inside `statusline.sh`, or the
+next install will not be able to see it and will drop it.
 
 ## Commands
 

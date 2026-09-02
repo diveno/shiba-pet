@@ -61,8 +61,17 @@ read -r answer
 case "$answer" in
   y|Y|yes)
     python3 - "$SETTINGS" "$HERE" <<'PY'
-import json, os, shutil, sys
+import json, os, shlex, shutil, sys
 settings, here = sys.argv[1], sys.argv[2]
+
+
+def open_or_empty(path):
+    try:
+        return open(path).read()
+    except IOError:
+        return ""
+
+
 os.makedirs(os.path.dirname(settings), exist_ok=True)
 data = {}
 if os.path.exists(settings):
@@ -73,12 +82,31 @@ if os.path.exists(settings):
         print("  %s is not plain JSON (comments?) - add this by hand:" % settings)
         print('  "statusLine": {"type": "command", "command": "sh %s/skills/shiba/scripts/statusline.sh"}' % here)
         raise SystemExit(0)
-old = (data.get("statusLine") or {}).get("command")
-if old and "shiba" not in old:
-    print("  keeping your current status line, chained via SHIBA_STATUSLINE_BASE:")
-    print("    export SHIBA_STATUSLINE_BASE=%r" % old)
+# Whatever was there before has to survive the swap. Three shapes: nothing,
+# someone else's status line (chain it in front of the dog's), or a wrapper of
+# ours from an earlier install - there, keep the environment already wired and
+# only move the path, or a re-run would silently drop the chained base.
+old = (data.get("statusLine") or {}).get("command") or ""
+mine = "skills/shiba/scripts/statusline.sh"
+if mine in old:
+    env = old[:old.rfind("sh ")]          # the last `sh ` starts our own call
+    prev = old[old.rfind("sh ") + 3:].strip()
+    if "SHIBA_STATUSLINE_BASE" not in env:
+        # An old wrapper could carry its base hardcoded rather than read it
+        # from the environment: that is invisible here, so say what is in it.
+        for ln in open_or_empty(os.path.expanduser(prev)).splitlines():
+            if "base=" in ln and "SHIBA_STATUSLINE_BASE" not in ln:
+                print("  heads up: the wrapper you are replacing ran its own base command")
+                print("    %s" % ln.strip())
+                print("  re-add it with SHIBA_STATUSLINE_BASE to keep it")
+                break
+elif old:
+    print("  keeping your current status line, chained in front of the dog's")
+    env = "SHIBA_STATUSLINE_BASE=%s " % shlex.quote(old)
+else:
+    env = ""
 data["statusLine"] = {"type": "command",
-                      "command": "sh %s/skills/shiba/scripts/statusline.sh" % here,
+                      "command": env + "sh %s/%s" % (here, mine),
                       "padding": 0, "refreshInterval": 10}
 json.dump(data, open(settings, "w"), indent=2, ensure_ascii=False)
 print("  status line wired (backup: %s.bak-shiba)" % settings)
